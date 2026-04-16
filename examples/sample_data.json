@@ -1,0 +1,88 @@
+{
+  "mathematics": {
+    "questions": [
+      {
+        "question_id": "math_q1",
+        "question_text": "Solve the quadratic equation: x² - 5x + 6 = 0",
+        "max_marks": 8,
+        "question_type": "calculation"
+      },
+      {
+        "question_id": "math_q2",
+        "question_text": "A rectangle has length 12cm and width 8cm. Calculate its perimeter and area.",
+        "max_marks": 6,
+        "question_type": "calculation"
+      }
+    ],
+    "answers": [
+      {
+        "question_id": "math_q1",
+        "student_response": "Using factoring: x² - 5x + 6 = (x-2)(x-3) = 0. So x = 2 or x = 3. Let me check: 2² - 5(2) + 6 = 4 - 10 + 6 = 0 ✓ and 3² - 5(3) + 6 = 9 - 15 + 6 = 0 ✓"
+      },
+      {
+        "question_id": "math_q2",
+        "student_response": "Perimeter = 2(length + width) = 2(12 + 8) = 2(20) = 40cm. Area = length × width = 12 × 8 = 96 cm²"
+      }
+    ],
+    "subject": "mathematics",
+    "student_id": "math_student_001"
+  },
+
+  "english": {
+    "questions": [
+      {
+        "question_id": "eng_q1",
+        "question_text": "Analyze the use of symbolism in the first chapter of 'To Kill a Mockingbird'.",
+        "max_marks": 15,
+        "question_type": "essay"
+      },
+      {
+        "question_id": "eng_q2",
+        "question_text": "Write a creative short story (200-300 words) about a character who discovers something unexpected.",
+        "max_marks": 10,
+        "question_type": "creative_writing"
+      }
+    ],
+    "answers": [
+      {
+        "question_id": "eng_q1",
+        "student_response": "In the opening chapter, Harper Lee uses several symbols to establish key themes. The mockingbird represents innocence and goodness that should be protected. The Radley house symbolizes fear of the unknown and prejudice. Scout's overalls represent her rejection of traditional gender roles, while Atticus's glasses symbolize wisdom and seeing truth clearly. These symbols foreshadow the novel's central themes of innocence, prejudice, and moral courage."
+      },
+      {
+        "question_id": "eng_q2",
+        "student_response": "Maya had always avoided the dusty attic, but her grandmother's passing left her no choice. Among yellowed photographs and moth-eaten clothes, she found a wooden box sealed with wax. Inside lay dozens of letters tied with blue ribbon—love letters from a man who wasn't her grandfather. The elegant handwriting spoke of secret meetings and dreams deferred. Maya realized her prim grandmother had harbored a passionate secret love story. As she read the final letter, dated just last year, Maya smiled. Some secrets make us more beautiful, not less."
+      }
+    ],
+    "subject": "english",
+    "student_id": "eng_student_001"
+  },
+
+  "science": {
+    "questions": [
+      {
+        "question_id": "sci_q1",
+        "question_text": "Explain the process of cellular respiration and compare it to photosynthesis.",
+        "max_marks": 12,
+        "question_type": "essay"
+      },
+      {
+        "question_id": "sci_q2",
+        "question_text": "A ball is dropped from a height of 20m. Calculate the time taken to hit the ground and the velocity just before impact. (g = 9.8 m/s²)",
+        "max_marks": 8,
+        "question_type": "calculation"
+      }
+    ],
+    "answers": [
+      {
+        "question_id": "sci_q1",
+        "student_response": "Cellular respiration breaks down glucose using oxygen to produce ATP, CO2, and water. The equation is: C6H12O6 + 6O2 → 6CO2 + 6H2O + ATP. This occurs in mitochondria through glycolysis, Krebs cycle, and electron transport. Photosynthesis is the reverse - plants use CO2 and water with sunlight to make glucose and oxygen: 6CO2 + 6H2O + light energy → C6H12O6 + 6O2. They're complementary processes that cycle carbon and oxygen through ecosystems."
+      },
+      {
+        "question_id": "sci_q2",
+        "student_response": "Using kinematic equations: h = 20m, u = 0 (dropped), a = g = 9.8 m/s². For time: s = ut + ½at² → 20 = 0 + ½(9.8)t² → 20 = 4.9t² → t² = 20/4.9 = 4.08 → t = 2.02 seconds. For final velocity: v = u + at = 0 + 9.8(2.02) = 19.8 m/s"
+      }
+    ],
+    "subject": "science",
+    "student_id": "sci_student_001"
+  }
+}
