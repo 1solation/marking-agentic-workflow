@@ -14,10 +14,10 @@ class MarkingAgentWorkflow:
     def __init__(self):
         self.llm_config = {
             "timeout": AGENT_CONFIG["timeout"],
+            "temperature": OPENAI_CONFIG["temperature"],
             "config_list": [{
                 "model": OPENAI_CONFIG["model"],
-                "api_key": OPENAI_CONFIG["api_key"],
-                "temperature": OPENAI_CONFIG["temperature"]
+                "api_key": OPENAI_CONFIG["api_key"]
             }]
         }
 
