@@ -36,7 +36,7 @@ class MarkingWorkflowApp:
             # Process through agent workflow
             result = await self.workflow.process_student_work(student_work)
 
-            return result.dict()
+            return result.model_dump()
 
         except Exception as e:
             return {

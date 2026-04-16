@@ -87,5 +87,27 @@ MARK_SCHEMES = {
             "Consider different historical interpretations",
             "Reward clear historical argument"
         ]
+    },
+    "geography": {
+        "general_criteria": {
+            "knowledge": "Geographical knowledge and understanding of places, processes and concepts",
+            "application": "Application of geographical skills and techniques",
+            "analysis": "Analysis and interpretation of data, maps and sources",
+            "evaluation": "Evaluation of issues and decision-making"
+        },
+        "grade_boundaries": {
+            "A": 0.8,
+            "B": 0.7,
+            "C": 0.6,
+            "D": 0.5,
+            "E": 0.4
+        },
+        "marking_guidelines": [
+            "Assess geographical knowledge and understanding",
+            "Evaluate use of geographical terminology",
+            "Consider quality of case study examples",
+            "Assess map skills and data interpretation",
+            "Reward analysis of geographical processes and patterns"
+        ]
     }
 }

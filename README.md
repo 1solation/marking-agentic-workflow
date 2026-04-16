@@ -105,6 +105,9 @@ python main.py --interactive
 
 # Run test suite
 python utils.py
+
+# Run a specific subject test util scrip
+python run.py test geography
 ```
 
 ## 📊 Input/Output Format

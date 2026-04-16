@@ -78,8 +78,8 @@ Use these mark schemes to validate consistency and accuracy of marking decisions
         try:
             # Step 1: Orchestrator coordinates the workflow
             orchestrator_input = {
-                "questions": [q.dict() for q in student_work.questions],
-                "answers": [a.dict() for a in student_work.answers],
+                "questions": [q.model_dump() for q in student_work.questions],
+                "answers": [a.model_dump() for a in student_work.answers],
                 "subject": student_work.subject.value,
                 "student_id": student_work.student_id
             }
@@ -173,7 +173,7 @@ Use these mark schemes to validate consistency and accuracy of marking decisions
         feedback_prompt = f"""
         Please generate educational feedback based on these marking results:
 
-        Marking Results: {marking_output.json(indent=2)}
+        Marking Results: {marking_output.model_dump_json(indent=2)}
 
         Provide:
         1. Teacher feedback - analytical summary for educator use
@@ -225,8 +225,8 @@ Use these mark schemes to validate consistency and accuracy of marking decisions
         Please validate the consistency and accuracy of these marking and feedback results:
 
         Subject: {subject.value}
-        Marking Results: {marking_output.json(indent=2)}
-        Feedback: {feedback.json(indent=2)}
+        Marking Results: {marking_output.model_dump_json(indent=2)}
+        Feedback: {feedback.model_dump_json(indent=2)}
 
         Check for:
         1. Consistency with mark scheme criteria

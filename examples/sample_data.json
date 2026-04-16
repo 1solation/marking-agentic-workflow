@@ -1,4 +1,42 @@
 {
+    "geography": {
+    "questions": [
+      {
+        "question_id": "geo_q1",
+        "question_text": "Explain the formation of river meanders and describe how they change over time. Use a case study example.",
+        "max_marks": 12,
+        "question_type": "essay"
+      },
+      {
+        "question_id": "geo_q2",
+        "question_text": "Calculate the population density of a region with 850,000 people living in an area of 340 km². Show your working.",
+        "max_marks": 4,
+        "question_type": "calculation"
+      },
+      {
+        "question_id": "geo_q3",
+        "question_text": "Analyze the causes and effects of urbanization in developing countries. Use examples to support your answer.",
+        "max_marks": 15,
+        "question_type": "essay"
+      }
+    ],
+    "answers": [
+      {
+        "question_id": "geo_q1",
+        "student_response": "River meanders form due to lateral erosion and deposition. Water flows faster on the outside of bends (due to centrifugal force) causing erosion and creating river cliffs. On the inside of bends, water flows slower so deposition occurs, forming slip-off slopes. Over time, meanders migrate downstream and become more pronounced. Eventually, the river may cut through the neck during floods, creating an oxbow lake. The River Severn in England shows good examples of meander development, with some sections having very pronounced curves that have formed oxbow lakes over time."
+      },
+      {
+        "question_id": "geo_q2",
+        "student_response": "Population density = Total population ÷ Total area. Population density = 850,000 ÷ 340 km² = 2,500 people per km². This is quite a high population density, similar to urban areas."
+      },
+      {
+        "question_id": "geo_q3",
+        "student_response": "Urbanization in developing countries is caused by rural-urban migration due to push factors (drought, lack of jobs, poor services) and pull factors (better jobs, education, healthcare). In Lagos, Nigeria, rapid urbanization has led to economic growth and improved infrastructure, but also created problems like traffic congestion, inadequate housing leading to slums like Makoko, water shortages, and air pollution. Similarly, Mumbai in India experiences overcrowding, with many living in slums like Dharavi, despite economic opportunities. Government responses include slum improvement projects and building new planned cities, but urbanization continues to outpace infrastructure development."
+      }
+    ],
+    "subject": "geography",
+    "student_id": "geo_student_001"
+  },
   "mathematics": {
     "questions": [
       {
