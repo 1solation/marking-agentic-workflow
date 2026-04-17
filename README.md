@@ -1,17 +1,61 @@
 # Microsoft Agent Framework - Academic Marking Workflow
 
-An intelligent multi-agent system built with Microsoft Agent Framework (AutoGen) and OpenAI GPT-4 for automated academic assessment, feedback generation, and validation.
+An intelligent multi-agent system built with Microsoft Agent Framework (AutoGen) and OpenAI GPT-4 for automated academic assessment, feedback generation, and validation with **comprehensive metrics tracking**.
 
 ## 🎯 Overview
 
-This system implements a comprehensive marking workflow using four specialized AI agents:
+This system implements a comprehensive marking workflow using four specialized AI agents with real-time performance monitoring:
 
 1. **🎭 Orchestrator Agent**: Coordinates the workflow and routes tasks between agents
 2. **📝 Dynamic Marking Agent**: Applies subject-specific mark schemes to grade student work
 3. **💬 Feedback Agent**: Generates constructive feedback for teachers and students
 4. **✅ Validation Agent**: Ensures consistency and quality of marking decisions
 
-## 🏗️ Architecture
+## 📊 **NEW: Enhanced Metrics & Monitoring**
+
+### Real-time Performance Tracking
+- **⏱️ Duration tracking** for each agent and overall workflow
+- **🔗 API request monitoring** with detailed logging
+- **🎯 Token usage tracking** (prompt, completion, and total tokens)
+- **📈 Performance insights** and optimization suggestions
+
+### Sample Metrics Output
+```
+============================================================
+🔍 AGENT EXECUTION METRICS SUMMARY
+============================================================
+
+⏱️  TOTAL WORKFLOW DURATION: 8.734s
+🔗 TOTAL API CALLS: 3
+🎯 TOTAL TOKENS: 2,847
+   └── Prompt tokens: 1,923
+   └── Completion tokens: 924
+
+📊 AGENT-BY-AGENT BREAKDOWN:
+
+🤖 MARKING AGENT:
+   ⏱️  Duration: 3.245s
+   🔗 API Calls: 1
+   🎯 Tokens: 1,456 (prompt: 1,102, completion: 354)
+   📊 Status: ✅ SUCCESS
+
+🤖 FEEDBACK AGENT:
+   ⏱️  Duration: 2.891s
+   🔗 API Calls: 1
+   🎯 Tokens: 892 (prompt: 543, completion: 349)
+   📊 Status: ✅ SUCCESS
+
+🤖 VALIDATION AGENT:
+   ⏱️  Duration: 2.598s
+   🔗 API Calls: 1
+   🎯 Tokens: 499 (prompt: 278, completion: 221)
+   📊 Status: ✅ SUCCESS
+
+💡 PERFORMANCE INSIGHTS:
+   🐌 Slowest agent: marking_agent (3.245s)
+   🔥 Most tokens used: marking_agent (1,456 tokens)
+   📈 Average agent duration: 2.911s
+```
 
 ```
 Input (Questions + Answers + Subject)
@@ -29,12 +73,15 @@ Output (Marks + Feedback + Validation)
 
 ## ✨ Features
 
-- **Multi-Subject Support**: Mathematics, English, Science, History, and more
+- **Multi-Subject Support**: Mathematics, English, Science, History, Geography, and more
 - **Intelligent Marking**: Context-aware grading with confidence scores
 - **Dual Feedback**: Separate feedback for teachers and students
 - **Quality Validation**: Consistency checking and bias detection
 - **Structured Output**: JSON-based results with detailed reasoning
 - **Extensible Design**: Easy to add new subjects and marking criteria
+- **📊 Performance Monitoring**: Real-time metrics, timing, and token usage tracking
+- **🔗 API Request Logging**: Detailed network request monitoring
+- **⚡ Optimization Insights**: Performance analysis and bottleneck identification
 
 ## 📋 Requirements
 
@@ -190,6 +237,7 @@ Each subject has customizable marking criteria:
 
 ## 🧪 Testing
 
+### Comprehensive Test Suite
 Run the comprehensive test suite:
 
 ```bash
@@ -204,6 +252,27 @@ runner = MarkingTestRunner()
 asyncio.run(runner.test_individual_subject('mathematics'))
 "
 ```
+
+### 📊 **NEW: Metrics Testing**
+Test the enhanced monitoring system:
+
+```bash
+# Test metrics tracking system
+python test_metrics.py
+
+# Run with detailed metrics output
+python run.py mark              # Sample data with full metrics
+python run.py test geography    # Subject-specific testing
+```
+
+### Performance Monitoring Output
+When you run any workflow, you'll see:
+- **Step-by-step progress** with agent execution status
+- **Real-time timing** for each agent execution
+- **API request logging** with detailed network activity
+- **Token usage breakdown** by agent and operation type
+- **Performance insights** with optimization suggestions
+- **Comprehensive summary** with totals and analysis
 
 ## 📁 Project Structure
 
@@ -325,3 +394,11 @@ For issues and questions:
 - Microsoft Agent Framework integration
 - Multi-subject marking support
 - Comprehensive validation system
+- **v1.1.0**: Enhanced Performance Monitoring
+- **📊 Real-time metrics tracking** for all agents
+- **⏱️ Duration monitoring** with millisecond precision
+- **🔗 API request logging** with detailed network monitoring
+- **🎯 Token usage tracking** (prompt, completion, total)
+- **💡 Performance insights** and optimization suggestions
+- **📈 Comprehensive reporting** with visual metrics summary
+- AutoGen v0.9.0 compatibility and Pydantic v2 support

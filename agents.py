@@ -1,7 +1,10 @@
 import json
 import asyncio
+import time
+import logging
 from typing import Dict, List, Any, Optional
 from datetime import datetime
+from dataclasses import dataclass, field
 import autogen
 from config import OPENAI_CONFIG, AGENT_CONFIG, SYSTEM_MESSAGES
 from schemas import (
@@ -9,6 +12,74 @@ from schemas import (
     ValidationResult, FinalOutput, Subject
 )
 from mark_schemes import MARK_SCHEMES
+
+@dataclass
+class AgentMetrics:
+    """Metrics for individual agent execution"""
+    agent_name: str
+    start_time: float = 0.0
+    end_time: float = 0.0
+    duration: float = 0.0
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    total_tokens: int = 0
+    api_calls: int = 0
+    success: bool = True
+    error_message: Optional[str] = None
+
+@dataclass
+class WorkflowMetrics:
+    """Overall workflow execution metrics"""
+    total_start_time: float = 0.0
+    total_end_time: float = 0.0
+    total_duration: float = 0.0
+    agent_metrics: Dict[str, AgentMetrics] = field(default_factory=dict)
+    total_prompt_tokens: int = 0
+    total_completion_tokens: int = 0
+    total_tokens: int = 0
+    total_api_calls: int = 0
+
+    def add_agent_metrics(self, metrics: AgentMetrics):
+        """Add metrics for an agent execution"""
+        self.agent_metrics[metrics.agent_name] = metrics
+        self.total_prompt_tokens += metrics.prompt_tokens
+        self.total_completion_tokens += metrics.completion_tokens
+        self.total_tokens += metrics.total_tokens
+        self.total_api_calls += metrics.api_calls
+
+    def print_summary(self):
+        """Print comprehensive metrics summary"""
+        print("\n" + "="*60)
+        print("🔍 AGENT EXECUTION METRICS SUMMARY")
+        print("="*60)
+
+        print(f"\n⏱️  TOTAL WORKFLOW DURATION: {self.total_duration:.3f}s")
+        print(f"🔗 TOTAL API CALLS: {self.total_api_calls}")
+        print(f"🎯 TOTAL TOKENS: {self.total_tokens:,}")
+        print(f"   └── Prompt tokens: {self.total_prompt_tokens:,}")
+        print(f"   └── Completion tokens: {self.total_completion_tokens:,}")
+
+        print(f"\n📊 AGENT-BY-AGENT BREAKDOWN:")
+
+        for agent_name, metrics in self.agent_metrics.items():
+            status = "✅ SUCCESS" if metrics.success else f"❌ FAILED: {metrics.error_message}"
+            print(f"\n🤖 {agent_name.upper().replace('_', ' ')}:")
+            print(f"   ⏱️  Duration: {metrics.duration:.3f}s")
+            print(f"   🔗 API Calls: {metrics.api_calls}")
+            print(f"   🎯 Tokens: {metrics.total_tokens:,} (prompt: {metrics.prompt_tokens:,}, completion: {metrics.completion_tokens:,})")
+            print(f"   📊 Status: {status}")
+
+        # Performance insights
+        print(f"\n💡 PERFORMANCE INSIGHTS:")
+        if self.agent_metrics:
+            slowest_agent = max(self.agent_metrics.values(), key=lambda x: x.duration)
+            print(f"   🐌 Slowest agent: {slowest_agent.agent_name} ({slowest_agent.duration:.3f}s)")
+
+            most_tokens = max(self.agent_metrics.values(), key=lambda x: x.total_tokens)
+            print(f"   🔥 Most tokens used: {most_tokens.agent_name} ({most_tokens.total_tokens:,} tokens)")
+
+            avg_duration = sum(m.duration for m in self.agent_metrics.values()) / len(self.agent_metrics)
+            print(f"   📈 Average agent duration: {avg_duration:.3f}s")
 
 class MarkingAgentWorkflow:
     def __init__(self):
@@ -20,6 +91,13 @@ class MarkingAgentWorkflow:
                 "api_key": OPENAI_CONFIG["api_key"]
             }]
         }
+
+        # Initialize metrics tracking
+        self.metrics = WorkflowMetrics()
+
+        # Setup logging for API requests
+        logging.basicConfig(level=logging.INFO)
+        self.logger = logging.getLogger(__name__)
 
         # Initialize agents
         self.orchestrator = self._create_orchestrator()
@@ -75,8 +153,16 @@ Use these mark schemes to validate consistency and accuracy of marking decisions
         """
         Main workflow to process student work through all agents
         """
+        print("\n🚀 Starting Microsoft Agent Framework Marking Workflow...")
+        print(f"📝 Processing work for subject: {student_work.subject.value}")
+        print(f"📊 Questions to process: {len(student_work.questions)}")
+
+        # Start overall timing
+        self.metrics.total_start_time = time.time()
+
         try:
             # Step 1: Orchestrator coordinates the workflow
+            print("\n🎭 Step 1: Orchestrator coordinating workflow...")
             orchestrator_input = {
                 "questions": [q.model_dump() for q in student_work.questions],
                 "answers": [a.model_dump() for a in student_work.answers],
@@ -85,15 +171,22 @@ Use these mark schemes to validate consistency and accuracy of marking decisions
             }
 
             # Step 2: Marking Agent processes the work
+            print("📝 Step 2: Marking Agent grading student work...")
             marking_result = await self._get_marking_result(orchestrator_input)
 
             # Step 3: Feedback Agent generates feedback
+            print("💬 Step 3: Feedback Agent generating educational feedback...")
             feedback_result = await self._get_feedback_result(marking_result)
 
             # Step 4: Validation Agent validates the results
+            print("✅ Step 4: Validation Agent checking consistency...")
             validation_result = await self._get_validation_result(
                 marking_result, feedback_result, student_work.subject
             )
+
+            # Calculate total duration
+            self.metrics.total_end_time = time.time()
+            self.metrics.total_duration = self.metrics.total_end_time - self.metrics.total_start_time
 
             # Combine all results
             final_output = FinalOutput(
@@ -103,10 +196,71 @@ Use these mark schemes to validate consistency and accuracy of marking decisions
                 processed_timestamp=datetime.now().isoformat()
             )
 
+            # Print comprehensive metrics
+            self.metrics.print_summary()
+
             return final_output
 
         except Exception as e:
+            self.metrics.total_end_time = time.time()
+            self.metrics.total_duration = self.metrics.total_end_time - self.metrics.total_start_time
+            print(f"\n❌ Workflow failed after {self.metrics.total_duration:.3f}s")
             raise Exception(f"Error processing student work: {str(e)}")
+
+    def _execute_agent_with_metrics(self, agent, user_proxy, prompt: str, agent_name: str) -> str:
+        """Execute an agent with comprehensive metrics tracking"""
+        metrics = AgentMetrics(agent_name=agent_name)
+        metrics.start_time = time.time()
+
+        try:
+            print(f"   🔄 Executing {agent_name}...")
+
+            # Reset agent usage before execution
+            agent.reset()
+
+            # Execute the agent
+            self.logger.info(f"🔗 API Request initiated for {agent_name}")
+            user_proxy.initiate_chat(
+                agent,
+                message=prompt,
+                max_turns=1
+            )
+
+            metrics.end_time = time.time()
+            metrics.duration = metrics.end_time - metrics.start_time
+            metrics.api_calls = 1  # Each agent makes one API call
+            metrics.success = True
+
+            # Get usage statistics from the agent
+            usage_summary = agent.get_actual_usage()
+            if usage_summary:
+                # AutoGen usage summary format: model -> {prompt_tokens, completion_tokens, total_tokens}
+                for model_usage in usage_summary.values():
+                    if isinstance(model_usage, dict):
+                        metrics.prompt_tokens += model_usage.get('prompt_tokens', 0)
+                        metrics.completion_tokens += model_usage.get('completion_tokens', 0)
+                        metrics.total_tokens += model_usage.get('total_tokens', 0)
+
+            # Log completion
+            self.logger.info(f"✅ {agent_name} completed in {metrics.duration:.3f}s")
+            print(f"   ✅ {agent_name} completed ({metrics.duration:.3f}s, {metrics.total_tokens:,} tokens)")
+
+            # Get the response
+            last_message = user_proxy.last_message()
+            response_text = last_message["content"] if last_message else ""
+
+        except Exception as e:
+            metrics.end_time = time.time()
+            metrics.duration = metrics.end_time - metrics.start_time
+            metrics.success = False
+            metrics.error_message = str(e)
+            print(f"   ❌ {agent_name} failed after {metrics.duration:.3f}s: {str(e)}")
+            raise e
+        finally:
+            # Always add metrics regardless of success/failure
+            self.metrics.add_agent_metrics(metrics)
+
+        return response_text
 
     async def _get_marking_result(self, work_data: Dict[str, Any]) -> MarkingOutput:
         """Get marking results from the marking agent"""
@@ -149,16 +303,10 @@ Use these mark schemes to validate consistency and accuracy of marking decisions
             human_input_mode="NEVER"
         )
 
-        # Get response from marking agent
-        user_proxy.initiate_chat(
-            self.marking_agent,
-            message=marking_prompt,
-            max_turns=1
+        # Execute agent with metrics tracking
+        response_text = self._execute_agent_with_metrics(
+            self.marking_agent, user_proxy, marking_prompt, "marking_agent"
         )
-
-        # Extract the JSON response from the last message
-        last_message = user_proxy.last_message()
-        response_text = last_message["content"]
 
         # Parse JSON response
         try:
@@ -198,14 +346,10 @@ Use these mark schemes to validate consistency and accuracy of marking decisions
             human_input_mode="NEVER"
         )
 
-        user_proxy.initiate_chat(
-            self.feedback_agent,
-            message=feedback_prompt,
-            max_turns=1
+        # Execute agent with metrics tracking
+        response_text = self._execute_agent_with_metrics(
+            self.feedback_agent, user_proxy, feedback_prompt, "feedback_agent"
         )
-
-        last_message = user_proxy.last_message()
-        response_text = last_message["content"]
 
         try:
             feedback_data = json.loads(self._extract_json_from_response(response_text))
@@ -249,14 +393,10 @@ Use these mark schemes to validate consistency and accuracy of marking decisions
             human_input_mode="NEVER"
         )
 
-        user_proxy.initiate_chat(
-            self.validation_agent,
-            message=validation_prompt,
-            max_turns=1
+        # Execute agent with metrics tracking
+        response_text = self._execute_agent_with_metrics(
+            self.validation_agent, user_proxy, validation_prompt, "validation_agent"
         )
-
-        last_message = user_proxy.last_message()
-        response_text = last_message["content"]
 
         try:
             validation_data = json.loads(self._extract_json_from_response(response_text))
